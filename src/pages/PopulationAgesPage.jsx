@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { DashboardLayout } from "../components/layouts/DashboardLayout";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,6 +39,9 @@ export const options = {
 
 export const PopulationAgesPage = () => {
     const [chartData, setChartData] = useState([]);
+    const [maxPopulation, setMaxPopulation] = useState(null);
+    const [maxPopulationIndex, setMaxPopulationIndex] = useState(null);
+    const [averageAge, setAverageAge] = useState(null);
     const url = "https://data.ssb.no/api/v0/dataset/1074.json";
   
     const fetchData = async () => {
@@ -50,6 +53,18 @@ export const PopulationAgesPage = () => {
         const population = data.dataset.value;
         console.log(population);
         setChartData(population);
+
+        const maxPopulationValue = Math.max(...population);
+        const maxPopulationValueIndex = population.indexOf(maxPopulationValue);
+  
+        setMaxPopulation(maxPopulationValue);
+        setMaxPopulationIndex(maxPopulationValueIndex);
+
+
+        const sumOfAges = population.reduce((acc, count, age) => acc + age * count, 0);
+        const totalPopulation = population.reduce((acc, count) => acc + count, 0);
+        const average = sumOfAges / totalPopulation;
+        setAverageAge(average);
       } catch (error) {
         console.log(error);
       }
@@ -75,7 +90,7 @@ export const PopulationAgesPage = () => {
   return (
     <DashboardLayout>
       <h1>PopulationAgesPage</h1>
-      <section className="flex w-[1000px] h-[1000px] flex-wrap items-center justify-center gap-16">
+      <section className="flex w-[1000px] flex-wrap items-center justify-center gap-16">
         {/* {chartData.map((data, index) => {
             return (
                 <div className="grid gap-4 p-8 border" key={`data for age: ${index}`}>
@@ -86,6 +101,16 @@ export const PopulationAgesPage = () => {
         })} */}
         {/* <Doughnut data={chartData} /> */}
         <Line className="" options={options} data={data} />
+        {/* <Bar data={data} /> */}
+        <div>
+          <h2>The largest population by age:</h2>
+        <p>Age: {maxPopulationIndex}</p>
+        <p>People: {maxPopulation}</p>
+        </div>
+        <div>
+          <h2>Average Age:</h2>
+          <p>{averageAge.toFixed(1)} years old</p>
+        </div>
       </section>
     </DashboardLayout>
   );
