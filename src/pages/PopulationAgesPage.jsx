@@ -109,7 +109,7 @@ export const PopulationAgesPage = () => {
         </div>
         <div>
           <h2>Average Age:</h2>
-          <p>{averageAge.toFixed(1)} years old</p>
+          <p>{averageAge ? averageAge.toFixed(2) : averageAge} years old</p>
         </div>
       </section>
     </DashboardLayout>
